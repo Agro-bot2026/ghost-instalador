@@ -722,15 +722,16 @@ ensure_deps_auto(){
   has_cmd ss || has_cmd netstat || faltan+=(iproute2 net-tools)
   has_cmd pgrep || faltan+=(procps)
   has_cmd ip || faltan+=(iproute2)
+  has_cmd sqlite3 || faltan+=(sqlite3)  # ghost-manager y ghost-panel la usan para las bases de usuarios
   [[ ${#faltan[@]} -eq 0 ]] && { ok "Dependencias OK (curl/wget, python3, systemd)"; return 0; }
 
   warn "Faltan: ${faltan[*]} — instalando automáticamente..."
   pkg_install "${faltan[@]}" || true
   # Intento específico por distro si falló
   case "$(detect_pkg)" in
-    apt) pkg_install curl python3 systemd systemd-sysv iproute2 net-tools || true ;;
-    dnf|yum) pkg_install curl python3 systemd iproute net-tools || true ;;
-    apk) pkg_install curl python3 systemd iproute2 || true ;;
+    apt) pkg_install curl python3 systemd systemd-sysv iproute2 net-tools sqlite3 || true ;;
+    dnf|yum) pkg_install curl python3 systemd iproute net-tools sqlite3 || true ;;
+    apk) pkg_install curl python3 systemd iproute2 sqlite3 || true ;;
   esac
   has_cmd curl && has_cmd python3 && ok "Dependencias instaladas" || warn "Alguna dependencia no se instaló (revisá)"
 }
